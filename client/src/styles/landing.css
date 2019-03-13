@@ -1,0 +1,25 @@
+.landing {
+  width: 50%;
+  margin: 0 auto;
+  margin-top: 100px;
+}
+
+.landing > form {
+  margin-top: 5px;
+  width: 100%;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  width: 25%;
+}
+
+input[type="submit"] {
+  background: #669999;
+  color: white;
+}
+
+input {
+  padding: 5px;
+}

@@ -1,0 +1,89 @@
+type Query {
+  info: String!
+  feed(
+    filter: String
+    skip: Int
+    first: Int
+    orderBy: LinkOrderByInput
+    after: String
+  ): Feed!
+  link(id: ID!): Link
+  users: [User!]!
+  allVotes: [Vote!]!
+}
+
+scalar Upload
+
+type Mutation {
+  post(title: String!, description: String!, tags: String, file: Upload!): Link
+  # post(title: String!, description: String!, tags: String): Link
+  # updateLink(id: ID!, url: String, description: String): Link
+  deleteLink(id: ID!): Link
+  signup(email: String!, password: String!, name: String!): User
+  login(email: String!, password: String!): AuthPayload
+  vote(linkId: ID!): Vote
+  removeVotesByUsers: BatchPayload
+  removeAllUsers: BatchPayload
+  removeLinkWithNullUser: BatchPayload
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  links: [Link!]!
+  votes: [Vote!]!
+}
+
+type Feed {
+  links: [Link!]!
+  count: Int!
+}
+
+type Link {
+  id: ID!
+  title: String!
+  description: String!
+  fileUrl: String!
+  postedBy: User
+  votes: [Vote!]!
+  tags: [String!]!
+  createdAt: String!
+}
+# type Link {
+#   id: ID!
+#   description: String!
+#   url: String!
+#   postedBy: User
+#   votes: [Vote!]!
+# }
+
+type AuthPayload {
+  token: String
+  user: User
+}
+
+type Subscription {
+  newLink: Link
+  newVote: Vote
+}
+
+type Vote {
+  id: ID!
+  link: Link!
+  user: User!
+}
+
+scalar Long
+type BatchPayload {
+  count: Long!
+}
+
+enum LinkOrderByInput {
+  description_ASC
+  description_DESC
+  url_ASC
+  url_DESC
+  createdAt_ASC
+  createdAt_DESC
+}

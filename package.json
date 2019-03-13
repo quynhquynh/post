@@ -1,0 +1,23 @@
+{
+  "name": "graphql-tutorial",
+  "version": "1.0.0",
+  "main": "server.js",
+  "license": "MIT",
+  "dependencies": {
+    "apollo-server": "^2.4.8",
+    "aws-sdk": "^2.418.0",
+    "bcryptjs": "^2.4.3",
+    "btoa": "^1.2.1",
+    "cors": "^2.8.5",
+    "global": "^4.3.2",
+    "graphql": "^14.1.1",
+    "graphql-yoga": "^1.17.4",
+    "jsonwebtoken": "^8.5.0",
+    "prisma-client-lib": "^1.28.0",
+    "uuid": "^3.3.2"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "server": "nodemon src/index.js"
+  }
+}
