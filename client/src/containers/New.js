@@ -7,34 +7,8 @@ import "../styles/new.css";
 import { feed as query } from "../queries";
 import Header from "./Header";
 import { post } from "../mutations";
-
-const styles = theme => ({
-  container: {
-    display: "flex",
-    flexWrap: "wrap",
-    width: "80%",
-    margin: "0 auto"
-  },
-  textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
-    width: "100%"
-  },
-  dense: {
-    marginTop: 19
-  },
-  fab: {
-    width: "15%",
-    margin: "0 auto",
-    fontSize: "0.8em",
-    backgroundColor: "#669999"
-  },
-  button: {
-    width: "25%",
-    margin: "0 auto",
-    color: "red"
-  }
-});
+import { styles } from "../styles/material-ui/New";
+import { resizeImage } from "../util";
 
 class TextFields extends Component {
   state = {
@@ -54,38 +28,19 @@ class TextFields extends Component {
     const file = e.target.files[0];
     const reader = new FileReader();
     reader.readAsDataURL(file);
-    reader.onloadend = e => {
+    reader.onloadend = async () => {
       const img = new Image();
       img.src = reader.result;
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        const MAX_WIDTH = 300;
-        const MAX_HEIGHT = 250;
-        let { width, height } = img;
-        if (width > MAX_WIDTH) {
-          height = Math.round((height * MAX_HEIGHT) / height);
-          width = MAX_WIDTH;
-        }
-        if (height > MAX_HEIGHT) {
-          width = Math.round(width * MAX_HEIGHT) / width;
-          height = MAX_HEIGHT;
-        }
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0, width, height);
-        const { type, name } = file;
-        canvas.toBlob(blob => {
-          blob.name = name;
-          this.setState({
-            file: blob,
-            imageSrc: reader.result,
-            isUploaded: true
-          });
-        }, type);
+      img.onload = async () => {
+        const blob = await resizeImage(img, file);
+        this.setState({
+          file: blob,
+          imageSrc: reader.result,
+          isUploaded: true
+        });
       };
-      // this.setState({ file, imageSrc: reader.result, isUploaded: true });
     };
+
     // this.setState({
     //   file,
     //   imageSrc: URL.createObjectURL(file),
@@ -157,8 +112,6 @@ class TextFields extends Component {
               autoComplete="off"
               onSubmit={e => {
                 e.preventDefault();
-                // console.log("file", this.state.file);
-                console.log(this.state.file.size);
                 mutation({
                   variables: {
                     ...this.state

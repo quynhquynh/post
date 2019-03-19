@@ -6,9 +6,10 @@ import "../styles/feed.css";
 
 class Feed extends Component {
   render() {
+    const { filter } = this.props;
     return (
       <div className="feed">
-        <Query query={feed}>
+        <Query query={feed} variables={{ filter }}>
           {({ data, loading, error }) => {
             if (loading) return <p>Loading...</p>;
             if (error) return <p>error</p>;

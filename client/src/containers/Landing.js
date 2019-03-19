@@ -8,16 +8,7 @@ import Signup from "./Signup";
 import Login from "./Login";
 import "../styles/landing.css";
 import { AuthenticateProvider } from "../context/AuthenticateContext";
-
-const styles = theme => ({
-  tabsIndicator: {
-    backgroundColor: "#669999"
-  },
-  tabRoot: {
-    fontSize: "1em",
-    textTransform: "initial"
-  }
-});
+import { styles } from "../styles/material-ui/Landing";
 
 class Landing extends Component {
   state = {

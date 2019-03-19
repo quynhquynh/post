@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Switch, Route } from "react-router-dom";
 
 import Landing from "../containers/Landing";
-import Main from "./Main";
+import Main from "../containers/Main";
 import New from "../containers/New";
 
 class App extends Component {

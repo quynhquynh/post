@@ -8,7 +8,7 @@ const aws = require("aws-sdk");
 const feed = async (root, { filter, skip, first, orderBy, after }, context) => {
   const where = filter
     ? {
-        OR: [{ description_contains: filter }, { url_contains: filter }]
+        OR: [{ description_contains: filter }, { title_contains: filter }]
       }
     : {};
 
