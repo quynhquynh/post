@@ -22,4 +22,15 @@ const server = new GraphQLServer({
   context: request => ({ ...request, prisma })
 });
 
-server.start(() => console.log("listening on localhost:4000"));
+const options = {
+  tracing: true,
+  uploads: {
+    maxFieldSize: 10000000
+  }
+  // formatError: err => {
+  //   console.log("err", err.message);
+  //   return "error here";
+  // }
+};
+
+server.start(options, () => console.log(`listening on port 4000`));

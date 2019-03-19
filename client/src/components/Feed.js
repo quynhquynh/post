@@ -1,36 +1,14 @@
 import React, { Component, Fragment } from "react";
 import { Query } from "react-apollo";
-import gql from "graphql-tag";
 import Link from "../containers/Link";
+import { feed } from "../queries";
 import "../styles/feed.css";
-
-export const FEED_QUERY = gql`
-  query {
-    feed {
-      links {
-        id
-        title
-        fileUrl
-        description
-        postedBy {
-          name
-        }
-        votes {
-          user {
-            name
-          }
-        }
-        createdAt
-      }
-    }
-  }
-`;
 
 class Feed extends Component {
   render() {
     return (
       <div className="feed">
-        <Query query={FEED_QUERY}>
+        <Query query={feed}>
           {({ data, loading, error }) => {
             if (loading) return <p>Loading...</p>;
             if (error) return <p>error</p>;

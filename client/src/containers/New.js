@@ -1,31 +1,12 @@
 import React, { Component } from "react";
 import { Mutation } from "react-apollo";
-import gql from "graphql-tag";
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import "../styles/new.css";
-import { FEED_QUERY } from "../components/Feed";
-
-const POST_MUTATION = gql`
-  mutation PostMutation(
-    $title: String!
-    $description: String!
-    $tags: String
-    $file: Upload!
-  ) {
-    post(description: $description, title: $title, file: $file, tags: $tags) {
-      title
-      description
-      fileUrl
-      postedBy {
-        name
-      }
-      tags
-      createdAt
-    }
-  }
-`;
+import { feed as query } from "../queries";
+import Header from "./Header";
+import { post } from "../mutations";
 
 const styles = theme => ({
   container: {
@@ -55,7 +36,7 @@ const styles = theme => ({
   }
 });
 
-class TextFields extends React.Component {
+class TextFields extends Component {
   state = {
     title: "",
     description: "",
@@ -74,7 +55,36 @@ class TextFields extends React.Component {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = e => {
-      this.setState({ file, imageSrc: reader.result, isUploaded: true });
+      const img = new Image();
+      img.src = reader.result;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const MAX_WIDTH = 300;
+        const MAX_HEIGHT = 250;
+        let { width, height } = img;
+        if (width > MAX_WIDTH) {
+          height = Math.round((height * MAX_HEIGHT) / height);
+          width = MAX_WIDTH;
+        }
+        if (height > MAX_HEIGHT) {
+          width = Math.round(width * MAX_HEIGHT) / width;
+          height = MAX_HEIGHT;
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+        const { type, name } = file;
+        canvas.toBlob(blob => {
+          blob.name = name;
+          this.setState({
+            file: blob,
+            imageSrc: reader.result,
+            isUploaded: true
+          });
+        }, type);
+      };
+      // this.setState({ file, imageSrc: reader.result, isUploaded: true });
     };
     // this.setState({
     //   file,
@@ -84,7 +94,7 @@ class TextFields extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, history } = this.props;
     const { title, description, tags, imageSrc, isUploaded } = this.state;
 
     const uploadButtonContent = (
@@ -115,88 +125,94 @@ class TextFields extends React.Component {
         <img
           src={imageSrc}
           id="preview-image"
-          alt="Preview image"
+          alt="Preview"
           style={{ maxHeight: "350", maxWidth: "250px" }}
         />
       </div>
     );
 
     return (
-      <Mutation
-        mutation={POST_MUTATION}
-        onCompleted={res => {
-          this.setState(
-            {
-              title: "",
-              description: "",
-              file: null,
-              tags: "",
-              imageSrc: "",
-              isUploaded: false
-            },
-            () => this.props.history.push("/main")
-          );
-        }}
-      >
-        {mutation => (
-          <form
-            className={classes.container}
-            autoComplete="off"
-            onSubmit={e => {
-              e.preventDefault();
-              console.log("state", this.state.file);
-              mutation({
-                variables: {
-                  ...this.state
-                },
-                optimisticResponse: true,
-                update: (store, { data: { post } }) => {
-                  try {
-                    const data = store.readQuery({ query: FEED_QUERY });
-                    data.feed.push(post);
-                    store.writeQuery({ FEED_QUERY, data });
-                  } catch (e) {
-                    console.log(e);
+      <div>
+        <Header history={history} />
+        <Mutation
+          mutation={post}
+          onCompleted={res => {
+            this.setState(
+              {
+                title: "",
+                description: "",
+                file: null,
+                tags: "",
+                imageSrc: "",
+                isUploaded: false
+              },
+              () => this.props.history.push("/main")
+            );
+          }}
+          // refetchQueries={() => [{ query }]}
+        >
+          {mutation => (
+            <form
+              className={classes.container}
+              autoComplete="off"
+              onSubmit={e => {
+                e.preventDefault();
+                // console.log("file", this.state.file);
+                console.log(this.state.file.size);
+                mutation({
+                  variables: {
+                    ...this.state
+                  },
+                  optimisticResponse: true,
+                  update: (store, { data: { post } }) => {
+                    try {
+                      if (!post) return;
+                      const data = store.readQuery({ query });
+                      data.feed.links.push(post);
+                      store.writeQuery({ query, data });
+                    } catch (e) {
+                      console.log("from readQuery", e);
+                    }
                   }
-                }
-              });
-            }}
-          >
-            <TextField
-              id="standard-with-placeholder"
-              label="Title *"
-              className={classes.textField}
-              placeholder="Post Title"
-              value={title}
-              onChange={this.handleChange("title")}
-              margin="normal"
-            />
+                });
+              }}
+            >
+              <TextField
+                id="standard-with-placeholder"
+                label="Title *"
+                className={classes.textField}
+                placeholder="Post Title"
+                value={title}
+                onChange={this.handleChange("title")}
+                margin="normal"
+              />
 
-            <TextField
-              required
-              id="standard-multiline-flexible" //standard-error
-              label="Description"
-              multiline
-              rowsMax="100"
-              className={classes.textField}
-              onChange={this.handleChange("description")}
-              value={description}
-              margin="normal"
-            />
+              <TextField
+                required
+                id="standard-multiline-flexible" //standard-error
+                label="Description"
+                multiline
+                rowsMax="100"
+                className={classes.textField}
+                onChange={this.handleChange("description")}
+                value={description}
+                margin="normal"
+              />
 
-            <TextField
-              id="standard-dense"
-              label="Tag(s)"
-              className={classes.textField}
-              value={tags}
-              onChange={this.handleChange("tags")}
-              margin="normal"
-            />
-            {isUploaded ? imageContent : uploadButtonContent}
-            <input type="submit" value="Submit" className="submit" />
-          </form>
-        )}
-      </Mutation>
+              <TextField
+                id="standard-dense"
+                label="Tag(s)"
+                className={classes.textField}
+                value={tags}
+                onChange={this.handleChange("tags")}
+                margin="normal"
+              />
+              {isUploaded ? imageContent : uploadButtonContent}
+              <input type="submit" value="Submit" className="submit" />
+            </form>
+          )}
+        </Mutation>
+      </div>
     );
   }
 }

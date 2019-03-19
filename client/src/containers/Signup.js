@@ -1,18 +1,8 @@
 import React, { Component } from "react";
 import { Mutation } from "react-apollo";
-import gql from "graphql-tag";
 import Input from "../components/Input";
-import { AuthenticateConsumer } from "./AuthenticateContext";
-
-const SIGNUP_MUTATION = gql`
-  mutation SignupMutation($name: String!, $email: String!, $password: String!) {
-    signup(name: $name, email: $email, password: $password) {
-      id
-      name
-      email
-    }
-  }
-`;
+import { AuthenticateConsumer } from "../context/AuthenticateContext";
+import { signup } from "../mutations";
 
 class Signup extends Component {
   constructor(props) {
@@ -36,22 +26,22 @@ class Signup extends Component {
       <AuthenticateConsumer>
         {context => (
           <Mutation
-            mutation={SIGNUP_MUTATION}
+            mutation={signup}
             variables={{ email, password, name }}
-            onCompleted={() =>
+            onCompleted={() => {
               this.setState({
                 name: "",
                 email: "",
                 password: ""
-              })
-            }
+              });
+              context.switch();
+            }}
           >
             {postMutation => (
               <form
                 onSubmit={e => {
                   e.preventDefault();
                   postMutation();
-                  context();
                 }}
               >
                 <Input

@@ -73,9 +73,14 @@ const removeAllUsers = async (parent, args, ctx, info) => {
 
 const removeLinkWithNullUser = async (parent, args, ctx, info) => {
   return ctx.prisma.deleteManyLinks({
-    url_contains: "url"
+    createdAt_gt: "2019-03-14T12:00:00.000Z"
   });
 };
+
+const deleteLink = async (parent, { id }, ctx, info) =>
+  ctx.prisma.deleteLink({
+    id
+  });
 
 module.exports = {
   signup,
@@ -84,5 +89,6 @@ module.exports = {
   vote,
   removeVotesByUsers,
   removeAllUsers,
-  removeLinkWithNullUser
+  removeLinkWithNullUser,
+  deleteLink
 };

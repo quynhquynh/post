@@ -7,7 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import Signup from "./Signup";
 import Login from "./Login";
 import "../styles/landing.css";
-import { AuthenticateProvider } from "./AuthenticateContext";
+import { AuthenticateProvider } from "../context/AuthenticateContext";
 
 const styles = theme => ({
   tabsIndicator: {
@@ -31,9 +31,15 @@ class Landing extends Component {
   render() {
     const { classes } = this.props;
     const { value } = this.state;
+    console.log("props in Landing", this.props.history);
     return (
       <div className="landing">
-        <AuthenticateProvider value={this.handleRoute}>
+        <AuthenticateProvider
+          value={{
+            switch: this.handleRoute,
+            props: () => this.props.history.push("/main")
+          }}
+        >
           <AppBar position="static" color="default" classes={classes.root}>
             <Tabs
               value={value}

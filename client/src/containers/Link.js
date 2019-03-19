@@ -19,7 +19,8 @@ import { formatDateTime } from "../util";
 
 const styles = theme => ({
   card: {
-    maxWidth: 400
+    maxWidth: 400,
+    marginTop: "5px"
   },
   media: {
     height: 0,
@@ -43,7 +44,7 @@ const styles = theme => ({
   }
 });
 
-class Post extends React.Component {
+class Post extends Component {
   state = { expanded: false };
 
   handleExpandClick = () => {
@@ -57,8 +58,7 @@ class Post extends React.Component {
       title,
       createdAt,
       description,
-      fileUrl,
-      votes
+      fileUrl
     } = this.props;
     return (
       <Card className={classes.card}>

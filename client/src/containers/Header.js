@@ -47,7 +47,8 @@ const styles = theme => ({
     display: "none",
     [theme.breakpoints.up("sm")]: {
       display: "block"
-    }
+    },
+    cursor: "pointer"
   },
   search: {
     position: "relative",
@@ -132,7 +133,7 @@ class Header extends React.Component {
 
   render() {
     const { anchorEl, mobileMoreAnchorEl } = this.state;
-    const { classes } = this.props;
+    const { classes, history } = this.props;
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
@@ -187,14 +188,16 @@ class Header extends React.Component {
         <MuiThemeProvider theme={theme}>
           <AppBar position="static" color="primary">
             <Toolbar>
-              <Typography
-                className={classes.title}
-                variant="h6"
-                color="inherit"
-                noWrap
-              >
-                News
-              </Typography>
+              <div onClick={() => history.push("/main")}>
+                <Typography
+                  className={classes.title}
+                  variant="h6"
+                  color="inherit"
+                  noWrap
+                >
+                  News
+                </Typography>
+              </div>
               <div className={classes.search}>
                 <div className={classes.searchIcon}>
                   <SearchIcon />
@@ -207,7 +210,7 @@ class Header extends React.Component {
                   }}
                 />
               </div>
-              <div onClick={() => this.props.history.push("/new")}>
+              <div onClick={() => history.push("/new")}>
                 <Fab color="primary" aria-label="Add" className={classes.fab}>
                   <AddIcon />
                 </Fab>

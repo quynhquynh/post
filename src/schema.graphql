@@ -18,7 +18,7 @@ type Mutation {
   post(title: String!, description: String!, tags: String, file: Upload!): Link
   # post(title: String!, description: String!, tags: String): Link
   # updateLink(id: ID!, url: String, description: String): Link
-  deleteLink(id: ID!): Link
+  deleteLink(id: ID!): BatchPayload
   signup(email: String!, password: String!, name: String!): User
   login(email: String!, password: String!): AuthPayload
   vote(linkId: ID!): Vote
@@ -76,7 +76,7 @@ type Vote {
 
 scalar Long
 type BatchPayload {
-  count: Long!
+  count: Long
 }
 
 enum LinkOrderByInput {
