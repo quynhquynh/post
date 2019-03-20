@@ -10,6 +10,7 @@ type Query {
   link(id: ID!): Link
   users: [User!]!
   allVotes: [Vote!]!
+  feedCursor(after: String, first: Int): FeedResultCursor
 }
 
 scalar Upload
@@ -89,4 +90,20 @@ directive @cacheControl(
 enum CacheControlScope {
   PUBLIC
   PRIVATE
+}
+
+type Edge {
+  cursor: String!
+  node: Link!
+}
+
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+}
+
+type FeedResultCursor {
+  edges: [Edge]!
+  pageInfo: PageInfo!
+  totalCount: Int!
 }

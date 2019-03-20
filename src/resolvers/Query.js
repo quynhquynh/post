@@ -60,9 +60,37 @@ const allVotes = (root, args, context) => context.prisma.votes();
 
 const link = (root, { id }, context) => context.prisma.link({ id });
 
+const feedCursor = async (root, { filter, after, first }, context) => {
+  const where = filter
+    ? {
+        OR: [{ description_contains: filter }, { title_contains: filter }]
+      }
+    : {};
+
+  const totalCount = await context.prisma
+    .linksConnection({ where, first, after })
+    .aggregate()
+    .count();
+
+  const edges = await context.prisma
+    .linksConnection({ where, first, after })
+    .edges();
+
+  const pageInfo = await context.prisma
+    .linksConnection({ where, first, after })
+    .pageInfo();
+
+  return {
+    edges,
+    pageInfo,
+    totalCount
+  };
+};
+
 module.exports = {
   feed,
   users,
   allVotes,
-  link
+  link,
+  feedCursor
 };

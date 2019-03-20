@@ -30,8 +30,7 @@ const options = {
     maxFieldSize: 10000000
   },
   cacheControl: true,
-  validationRules: [NoInstropection, depthLimit(5)],
-  getEndpoint: true
+  validationRules: [depthLimit(5)] // set no instropection not display schema
   // formatError: err => {
   //   console.log("err", err.message);
   //   return "error here";
