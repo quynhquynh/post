@@ -9,6 +9,7 @@ class Feed extends Component {
     const { filter } = this.props;
     return (
       <div className="feed">
+        {/* fetchPolicy="network-only" not caching */}
         <Query query={feed} variables={{ filter }}>
           {({ data, loading, error }) => {
             if (loading) return <p>Loading...</p>;

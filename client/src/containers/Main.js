@@ -15,8 +15,6 @@ class Main extends Component {
     const { history } = this.props;
     const { filter } = this.state;
 
-    console.log("push", this.props);
-
     return (
       <Fragment>
         <Header history={history} onChange={this.handleChange} />

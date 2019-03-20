@@ -104,7 +104,12 @@ class TextFields extends Component {
               () => this.props.history.push("/main")
             );
           }}
-          // refetchQueries={() => [{ query }]}
+          // refetchQueries={() => [
+          //   {
+          //     query,
+          //     variables: { filter: "" }
+          //   }
+          // ]}
         >
           {mutation => (
             <form
@@ -119,8 +124,14 @@ class TextFields extends Component {
                   optimisticResponse: true,
                   update: (store, { data: { post } }) => {
                     try {
-                      if (!post) return;
-                      const data = store.readQuery({ query });
+                      if (!post) {
+                        console.log("no post");
+                        return;
+                      }
+                      const data = store.readQuery({
+                        query,
+                        variables: { filter: "" }
+                      });
                       data.feed.links.push(post);
                       store.writeQuery({ query, data });
                     } catch (e) {

@@ -5,13 +5,17 @@ const {
 } = require("../../config/credentials");
 const aws = require("aws-sdk");
 
-const feed = async (root, { filter, skip, first, orderBy, after }, context) => {
+const feed = async (
+  root,
+  { filter, skip, first, orderBy, after },
+  context,
+  info
+) => {
   const where = filter
     ? {
         OR: [{ description_contains: filter }, { title_contains: filter }]
       }
     : {};
-
   const links = await context.prisma.links({
     where,
     skip,
@@ -54,8 +58,11 @@ const users = (root, args, context) => context.prisma.users();
 
 const allVotes = (root, args, context) => context.prisma.votes();
 
+const link = (root, { id }, context) => context.prisma.link({ id });
+
 module.exports = {
   feed,
   users,
-  allVotes
+  allVotes,
+  link
 };

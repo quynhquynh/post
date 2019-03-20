@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const uuid = require("uuid/v1");
 const aws = require("aws-sdk");
-const APP_SECRET = "GraphQL-is-aw3some";
+const graphql = require("graphql");
 const {
   accessKeyId,
   secretAccessKey,
@@ -80,8 +80,24 @@ const processUpload = async file => {
   }
 };
 
+const NoInstropection = context => {
+  return {
+    Field(node) {
+      const nodeValue = node.name.value;
+      if (nodeValue === "__schema" || nodeValue === "__type") {
+        context.reportError(
+          new graphql.GraphQLError(
+            "GraphQL introspection is not allowed, but the query contained __schema or __type",
+            [node]
+          )
+        );
+      }
+    }
+  };
+};
+
 module.exports = {
-  APP_SECRET,
   getUserId,
-  processUpload
+  processUpload,
+  NoInstropection
 };

@@ -12,6 +12,7 @@ import { createUploadLink } from "apollo-upload-client";
 import { onError } from "apollo-link-error";
 import { ApolloLink } from "apollo-boost";
 import apolloLogger from "apollo-link-logger";
+import { createPersistedQueryLink } from "apollo-link-persisted-queries";
 
 // const httpLink = createHttpLink({
 //   uri: "http://localhost:4000"
@@ -20,6 +21,8 @@ import apolloLogger from "apollo-link-logger";
 const uploadLink = createUploadLink({
   uri: "http://localhost:4000"
 });
+
+const persistedQueryLink = createPersistedQueryLink().concat(uploadLink);
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors)
@@ -32,7 +35,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 });
 
 const client = new ApolloClient({
-  link: ApolloLink.from([apolloLogger, errorLink, uploadLink]),
+  link: ApolloLink.from([apolloLogger, errorLink, persistedQueryLink]),
   cache: new InMemoryCache(),
   connectToDevTools: true
   // request: async operation => {

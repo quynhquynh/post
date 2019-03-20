@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { APP_SECRET, getUserId, processUpload } = require("../utils"); // separate APP_SECRET
+const { getUserId, processUpload } = require("../utils");
+const { APP_SECRET } = require("../../config/credentials");
 
 const signup = async (parent, args, context, info) => {
   const password = await bcrypt.hash(args.password, 10);

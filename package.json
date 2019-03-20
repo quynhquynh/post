@@ -9,8 +9,10 @@
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.13.2",
     "graphql": "^14.1.1",
+    "graphql-depth-limit": "^1.1.0",
     "graphql-yoga": "^1.17.4",
     "jsonwebtoken": "^8.5.0",
+    "lodash": "^4.17.11",
     "prisma-client-lib": "^1.28.0",
     "uuid": "^3.3.2"
   },

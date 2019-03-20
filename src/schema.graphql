@@ -27,7 +27,7 @@ type Mutation {
   removeLinkWithNullUser: BatchPayload
 }
 
-type User {
+type User @cacheControl(maxAge: 100) {
   id: ID!
   name: String!
   email: String!
@@ -40,23 +40,16 @@ type Feed {
   count: Int!
 }
 
-type Link {
+type Link @cacheControl(maxAge: 240) {
   id: ID!
   title: String!
   description: String!
   fileUrl: String!
   postedBy: User
-  votes: [Vote!]!
+  votes: [Vote!]! @cacheControl(maxAge: 30)
   tags: [String!]!
   createdAt: String!
 }
-# type Link {
-#   id: ID!
-#   description: String!
-#   url: String!
-#   postedBy: User
-#   votes: [Vote!]!
-# }
 
 type AuthPayload {
   token: String
@@ -86,4 +79,14 @@ enum LinkOrderByInput {
   url_DESC
   createdAt_ASC
   createdAt_DESC
+}
+
+directive @cacheControl(
+  maxAge: Int
+  scope: CacheControlScope
+) on OBJECT | FIELD_DEFINITION
+
+enum CacheControlScope {
+  PUBLIC
+  PRIVATE
 }

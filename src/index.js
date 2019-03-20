@@ -6,6 +6,8 @@ const User = require("./resolvers/User");
 const Link = require("./resolvers/Link");
 const Subscription = require("./resolvers/Subscription");
 const Vote = require("./resolvers/Vote");
+const { NoInstropection } = require("./utils");
+const depthLimit = require("graphql-depth-limit");
 
 const resolvers = {
   Query,
@@ -26,7 +28,10 @@ const options = {
   tracing: true,
   uploads: {
     maxFieldSize: 10000000
-  }
+  },
+  cacheControl: true,
+  validationRules: [NoInstropection, depthLimit(5)],
+  getEndpoint: true
   // formatError: err => {
   //   console.log("err", err.message);
   //   return "error here";
